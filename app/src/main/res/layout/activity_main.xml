@@ -1,0 +1,50 @@
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+    <!-- 添加图片背景 -->
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/login_back"
+            android:scaleType="centerCrop"
+            />
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/transparent"> <!-- 设置透明背景以显示图片 -->
+
+        <EditText
+                android:id="@+id/editTextUsername"
+                android:layout_width="355dp"
+                android:layout_height="wrap_content"
+                android:hint="账户"/>
+
+        <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="密码"
+                android:inputType="textPassword" />
+
+        <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="登录" />
+
+        <TextView
+                android:id="@+id/textViewMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:textColor="@android:color/holo_red_light" />
+    </LinearLayout>
+</RelativeLayout>
