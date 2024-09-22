@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zxp.bored.entity.Message;
 import com.zxp.bored.repository.MessageRepository;
 import com.zxp.bored.service.MessageService;
-import com.zxp.bored.service.UserService;
+import com.zxp.bored.service.UserCheckService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,17 +31,17 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
 
     @Resource
-    private UserService userService;
+    private UserCheckService userCheckService;
 
     @Resource
     private ObjectMapper objectMapper;
 
     @Override
     public boolean addMessage(String senderAccount, String receiverAccount, String content) {
-        if (!userService.findUserExist(senderAccount)) {
+        if (!userCheckService.findUserExist(senderAccount)) {
             return false;
         }
-        if (!userService.findUserExist(receiverAccount)) {
+        if (!userCheckService.findUserExist(receiverAccount)) {
             return false;
         }
         Message message = new Message();

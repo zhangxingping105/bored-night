@@ -48,12 +48,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean findUserExist(String account) {
-        User user = userRepository.findUserByAccount(account);
-        return user == null ? false : true;
-    }
-
-    @Override
     public ResponseEntity<ApiResponse<String>> login(UserLoginReq req) {
         User existUser = userRepository.findUserByAccount(req.getAccount());
         if (existUser != null && existUser.getPassword().equals(req.getPassword())) {

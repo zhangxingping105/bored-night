@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zxp.bored.dao.FriendDao">
+    <select id="queryFriendDetail" resultType="com.zxp.bored.model.response.FriendDetailResp"
+            parameterType="java.lang.String">
+        select a.friend_account, b.username from friend a LEFT JOIN user b on a.friend_account = b.account
+        <where>
+            a.user_account = #{account}
+        </where>
+    </select>
+</mapper>
