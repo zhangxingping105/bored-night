@@ -48,7 +48,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload();
         // 解析消息，假设消息格式为 "receiverId:messageContent"
-        String[] parts = payload.split("\u0001", 2);
+        String[] parts = payload.split("\u0001");
         if (parts.length == 2) {
             String receiverAccount = parts[0];
             String messageContent = parts[1];
