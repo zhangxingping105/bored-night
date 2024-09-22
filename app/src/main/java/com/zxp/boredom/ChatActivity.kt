@@ -1,10 +1,10 @@
 package com.zxp.boredom
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -15,10 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
+import org.chromium.build.BuildConfig
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
@@ -40,15 +37,24 @@ class ChatActivity : AppCompatActivity(){
         sendButton = findViewById(R.id.button_send)
         // 获取用户名
         var account = intent.getStringExtra("account")
-        setupWebSocket(account)
-
+        var friendAccount = intent.getStringExtra("friendAccount")
+        var username = intent.getStringExtra("username")
+        val friendNameTextView = findViewById<TextView>(R.id.chat_friend_name)
+        friendNameTextView.text = username
+        // 设置名字
+        if (friendAccount != null && account != null) {
+            setupWebSocket(account)
+        } else {
+            Toast.makeText(this@ChatActivity, "传递账号失败", Toast.LENGTH_SHORT).show()
+        }
         sendButton.setOnClickListener {
-            sendMessage(account, editText.text.toString())
+            sendMessage(friendAccount, editText.text.toString())
         }
     }
 
     private fun setupWebSocket(account: String?) {
-        val uri = URI("ws://10.0.2.2:8090/chat?account=$account") // WebSocket 地址
+        val baseUrl = this.getString(R.string.base_url)
+        val uri = URI("ws://$baseUrl/chat?account=$account") // WebSocket 地址
         webSocketClient = object : WebSocketClient(uri) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 runOnUiThread {
@@ -83,9 +89,9 @@ class ChatActivity : AppCompatActivity(){
         webSocketClient.connect()
     }
 
-    private fun sendMessage(account: String?, messageText: String) {
+    private fun sendMessage(friendAccount: String?, messageText: String) {
         if (messageText.isNotBlank()) {
-            webSocketClient.send(messageText)
+            webSocketClient.send(friendAccount + "\u0001" + messageText)
             displayMessage(messageText, true)
             editText.text.clear()
         }
@@ -106,7 +112,10 @@ class ChatActivity : AppCompatActivity(){
             params.gravity = Gravity.START // 对方的消息靠左
             messageView.setBackgroundResource(R.drawable.receiver_message_background) // 设置背景
         }
+        params.topMargin = 16
         messageView.layoutParams = params
+        messageView.textSize = 20f
+        messageView.setTextColor(Color.BLACK)
         messageContainer.addView(messageView)
 
         messageArea.post { messageArea.fullScroll(View.FOCUS_DOWN) }

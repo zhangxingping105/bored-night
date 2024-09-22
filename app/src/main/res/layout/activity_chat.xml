@@ -3,7 +3,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/chat_back">
+        android:background="@drawable/chat_back2">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/chat_friend_name"
+            android:textSize="24sp"
+            android:padding="16dp"
+            android:layout_gravity="center"/>
 
     <!-- 消息回显区 -->
     <ScrollView

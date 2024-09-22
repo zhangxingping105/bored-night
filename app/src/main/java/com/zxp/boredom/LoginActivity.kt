@@ -2,19 +2,14 @@ package com.zxp.boredom
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okio.IOException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -44,13 +39,29 @@ class LoginActivity : AppCompatActivity() {
                 login(username.text.toString(), password.text.toString())
             }
         }
+        val editTextPassword = findViewById<EditText>(R.id.password)
+        val imageViewToggle = findViewById<ImageView>(R.id.imageViewToggle)
+
+        var isPasswordVisible = false
+        imageViewToggle.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            editTextPassword.inputType = if (isPasswordVisible) {
+                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            editTextPassword.setSelection(editTextPassword.text.length)
+
+            // 切换图标
+            imageViewToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
+        }
     }
 
     private fun login(account: String, password: String) {
         val request = LoginRequest(account, password)
-
+        val baseUrl = this.getString(R.string.base_url)
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8090")
+            .baseUrl("http://$baseUrl")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -60,8 +71,9 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val response = apiService.login(request)
                 if (response.isSuccessful) {
-                    val intent = Intent(this@LoginActivity, ChatActivity::class.java)
+                    val intent = Intent(this@LoginActivity, FriendListActivity::class.java)
                     intent.putExtra("account", account)
+                    TokenManager.setToken(response.body()?.data)
                     startActivity(intent)
                     finish()
                 } else {
@@ -79,7 +91,10 @@ class LoginActivity : AppCompatActivity() {
 
 data class LoginRequest(val account: String, val password: String)
 
+data class ApiResponse<T>(val code: Int, val message: String, val data: T?)
+
 interface ApiService {
     @POST("/api/auth/login")
-    suspend fun login(@Body request: LoginRequest): retrofit2.Response<Void>
+    suspend fun login(@Body request: LoginRequest): retrofit2.Response<ApiResponse<String>>
 }
+
