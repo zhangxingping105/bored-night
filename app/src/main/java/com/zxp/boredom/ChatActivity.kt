@@ -1,6 +1,7 @@
 package com.zxp.boredom
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -48,8 +49,14 @@ class ChatActivity : AppCompatActivity(){
             Toast.makeText(this@ChatActivity, "传递账号失败", Toast.LENGTH_SHORT).show()
         }
         sendButton.setOnClickListener {
-            sendMessage(friendAccount, editText.text.toString())
-        }
+            try {
+                sendMessage(friendAccount, editText.text.toString())
+            } catch (e: Exception) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+         }
     }
 
     private fun setupWebSocket(account: String?) {
