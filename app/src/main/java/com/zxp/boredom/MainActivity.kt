@@ -7,11 +7,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.zxp.boredom.fragment.FriendsFragment
+import com.zxp.boredom.fragment.MessagesFragment
+import com.zxp.boredom.fragment.ProfileFragment
 import com.zxp.boredom.ui.theme.BoredomTheme
 import okhttp3.Call
 import okhttp3.Callback
@@ -22,78 +27,27 @@ import okhttp3.Response
 import okio.IOException
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        // 启动登录界面
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        // 关闭当前活动
-        finish()
+        // 设置默认Fragment
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MessagesFragment()).commit()
+
+        bottomNav.setOnNavigationItemSelectedListener { menuItem ->
+            val selectedFragment = when (menuItem.itemId) {
+                R.id.nav_messages -> MessagesFragment()
+                R.id.nav_friends -> FriendsFragment()
+                R.id.nav_profile -> ProfileFragment()
+                else -> null
+            }
+            selectedFragment?.let {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, it).commit()
+            }
+            true
+        }
     }
-//    private lateinit var editTextUsername: EditText
-//    private lateinit var editTextPassword: EditText
-//    private lateinit var buttonLogin: Button
-//    private lateinit var textViewMessage: TextView
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//
-//        editTextUsername = findViewById(R.id.editTextUsername)
-//        editTextPassword = findViewById(R.id.editTextPassword)
-//        buttonLogin = findViewById(R.id.buttonLogin)
-//        textViewMessage = findViewById(R.id.textViewMessage)
-//
-//        buttonLogin.setOnClickListener { login(editTextUsername.text.toString(), editTextPassword.text.toString()) }
-//    }
-//    private fun login(account: String, password: String) {
-//        val url = "http://127.0.0.1:8090/api/auth/login"
-//        val client = OkHttpClient()
-//
-//        val requestBody = FormBody.Builder()
-//            .add("account", account)
-//            .add("password", password)
-//            .build()
-//
-//        val request = Request.Builder()
-//            .url(url)
-//            .post(requestBody)
-//            .build()
-//
-//        client.newCall(request).enqueue(object : Callback {
-//            override fun onResponse(call: Call, response: Response) {
-//                if (response.isSuccessful) {
-//                    startActivity(Intent(this@LoginActivity, ChatActivity::class.java))
-//                    finish()
-//                } else {
-//                    // 处理登录失败
-//                    textViewMessage.text = "用户名或密码错误"
-//                }
-//            }
-//
-//            override fun onFailure(call: Call, e: IOException) {
-//                // 处理请求失败
-//            }
-//        })
-//    }
-//}
-//
-//
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    BoredomTheme {
-//        Greeting("Android")
-//    }
 }

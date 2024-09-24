@@ -71,9 +71,11 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val response = apiService.login(request)
                 if (response.isSuccessful) {
-                    val intent = Intent(this@LoginActivity, FriendListActivity::class.java)
-                    intent.putExtra("account", account)
-                    TokenManager.setToken(response.body()?.data)
+//                    val intent = Intent(this@LoginActivity, FriendListActivity::class.java)
+//                    intent.putExtra("account", account)
+                    GlobalVariableManager.setToken(response.body()?.data)
+                    GlobalVariableManager.setAccount(account)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

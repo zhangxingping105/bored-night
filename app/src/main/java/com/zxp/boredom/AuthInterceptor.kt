@@ -16,7 +16,7 @@ class AuthInterceptor(private val account: String) : Interceptor {
         val requestBuilder = originalRequest.newBuilder()
 
 
-        TokenManager.getToken()?.let { requestBuilder.addHeader("Authorization", it) }
+        GlobalVariableManager.getToken()?.let { requestBuilder.addHeader("Authorization", it) }
 
         requestBuilder.addHeader("account", account)
         return chain.proceed(requestBuilder.build())
